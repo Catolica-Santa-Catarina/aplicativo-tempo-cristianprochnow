@@ -52,7 +52,12 @@ class _LoadingScreenState extends State<LoadingScreen> {
     }
   }
 
-  void onPressedGetLocation() {
+  void onPressedGetLocation() {}
+
+  @override
+  void initState() {
+    super.initState();
+
     getLocation();
   }
 
