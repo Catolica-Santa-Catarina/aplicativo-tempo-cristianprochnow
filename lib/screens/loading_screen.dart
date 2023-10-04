@@ -2,7 +2,8 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:tempo_template/services/location.dart';
+import 'package:tempo_template/models/location.dart';
+import 'package:tempo_template/services/location_service.dart';
 
 class LoadingScreen extends StatefulWidget {
   const LoadingScreen({Key? key}) : super(key: key);
@@ -12,23 +13,22 @@ class LoadingScreen extends StatefulWidget {
 }
 
 class _LoadingScreenState extends State<LoadingScreen> {
-  Location location = Location();
   String apiKey = '23760ad9ae5f8405406946d32fd49435';
 
-  Future<void> getLocation() async {
-    await location.getCurrentLocation();
+  Future<Location> getLocation() async {
+    LocationService locationService = LocationService();
+    Location location = await locationService.getCurrentLocation();
+
+    return location;
   }
 
   Future<void> getData() async {
-    await getLocation();
-
-    double? lat = location.latitude;
-    double? lon = location.longitude;
+    Location location = await getLocation();
 
     var url = Uri.parse(
       'https://api.openweathermap.org/data/2.5/weather'
-          '?lat=$lat'
-          '&lon=$lon'
+          '?lat=${location.latitude}'
+          '&lon=${location.longitude}'
           '&unit=metrics'
           '&appid=$apiKey'
     );

@@ -1,21 +1,21 @@
 import 'package:geolocator/geolocator.dart';
+import 'package:tempo_template/models/location.dart';
 
-class Location {
-  double? latitude;
-  double? longitude;
-
-  Future<void> getCurrentLocation() async {
-    await checkLocationPermission();
+class LocationService {
+  Future<Location> getCurrentLocation() async {
+    await _checkLocationPermission();
 
     Position position = await Geolocator.getCurrentPosition(
       desiredAccuracy: LocationAccuracy.high  
     );
-
-    latitude = position.latitude;
-    longitude = position.longitude;
+    
+    return Location(
+      latitude: position.latitude,
+      longitude: position.longitude
+    );
   }
 
-  Future<void> checkLocationPermission() async {
+  Future<void> _checkLocationPermission() async {
     bool serviceEnabled;
     LocationPermission permission;
 
