@@ -21,3 +21,5 @@ const kConditionTextStyle = TextStyle(
 );
 
 String? apiKey = dotenv.env['API_KEY'];
+
+const openWeatherUrl = 'https://api.openweathermap.org/data/2.5/weather';

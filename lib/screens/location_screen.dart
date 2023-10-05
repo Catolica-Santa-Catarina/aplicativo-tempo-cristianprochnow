@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tempo_template/models/weather.dart';
+import 'package:tempo_template/screens/city_screen.dart';
+import 'package:tempo_template/services/weather.dart';
 import 'package:tempo_template/utilities/constants.dart';
 
 class LocationScreen extends StatefulWidget {
@@ -19,18 +21,20 @@ class _LocationScreenState extends State<LocationScreen> {
   late String message;
   late String weatherIcon;
 
-  void updateUI() {
+  void updateUI(Weather weather) {
     setState(() {
-      weather = widget.weather;
-      message = weather.getMessage();
-      weatherIcon = weather.getWeatherIcon();
+      this.weather = weather;
+      message = this.weather.getMessage();
+      weatherIcon = this.weather.getWeatherIcon();
     });
   }
 
   @override
   void initState() {
     super.initState();
-    updateUI();
+
+    weather = widget.weather;
+    updateUI(weather);
   }
 
   @override
@@ -55,14 +59,28 @@ class _LocationScreenState extends State<LocationScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   TextButton(
-                    onPressed: () {},
+                    onPressed: () async {
+                      Weather weather = await WeatherService().getWeatherLocation();
+
+                      updateUI(weather);
+                    },
                     child: const Icon(
                       Icons.near_me,
                       size: 50.0,
                     ),
                   ),
                   TextButton(
-                    onPressed: () {},
+                    onPressed: () async {
+                      var cityName = await Navigator.push(context, MaterialPageRoute(
+                        builder: (context) => const CityScreen()
+                      ));
+
+                      if (cityName != null) {
+                        Weather weatherData = await WeatherService()
+                            .getCityWeather(cityName);
+                        updateUI(weatherData);
+                      }
+                    },
                     child: const Icon(
                       Icons.location_city,
                       size: 50.0,
@@ -86,9 +104,9 @@ class _LocationScreenState extends State<LocationScreen> {
                 ),
               ),
               Padding(
-                padding: EdgeInsets.only(right: 15.0),
+                padding: const EdgeInsets.only(right: 15.0),
                 child: Text(
-                  '${message} em ${weather.cityName.toString()}',
+                  '$message em ${weather.cityName.toString()}',
                   textAlign: TextAlign.right,
                   style: kMessageTextStyle,
                 ),
